@@ -2,21 +2,21 @@ from typing import Literal, Tuple
 
 from social_validator.exceptions import ValidationError
 
-# Restrictions for user, channel and bot names
+# Restrictions for user, channel and bot identifiers
 ID_MIN_LENGTH = 5
 ID_MAX_LENGTH = 32
 
 # Restrictions for description (about) field
 DESCRIPTION_USER_MAX_LENGTH = 70
 DESCRIPTION_GROUP_MAX_LENGTH = 255
-DESCRIPTION_CHANNEL_MAX_LENGTH = 255
+DESCRIPTION_CHANNEL_MAX_LENGTH = DESCRIPTION_GROUP_MAX_LENGTH
 DESCRIPTION_BOT_MAX_LENGTH = 120
 
 # Restrictions for chat names
 CHAT_NAME_MIN_LENGTH = 1
 CHAT_NAME_MAX_LENGTH = 128
 
-# Restrictions for usernames
+# Restrictions for user and bot names
 FIRST_NAME_MIN_LENGTH = 1
 FIRST_NAME_MAX_LENGTH = 64
 LAST_NAME_MAX_LENGTH = 64
@@ -36,13 +36,21 @@ ChatType = Literal["user", "group", "channel", "bot"]
 
 
 def _is_valid_name(s: str) -> bool:
+    """
+    Checks the string for matching the pattern: A-Za-z, 0-9, _
+    """
     # use a small hack to avoid performing additional checks
     s = s.replace("_", "A")
     return s.isascii() and s.isalnum()
 
 
 def _is_valid_first_char(s: str) -> bool:
+    """
+    Checks the first character for the fact that it is not a digit or an
+    underscore.
+    """
     if not s:
+        # empty string
         return False
 
     char = s[0]
@@ -50,6 +58,11 @@ def _is_valid_first_char(s: str) -> bool:
 
 
 def _get_description_length_limit(t: ChatType) -> int:
+    """
+    Gets the maximum allowed length for the description based on the channel
+    type.
+    If an invalid type is specified, a ValueError will be thrown.
+    """
     if t == "user":
         return DESCRIPTION_USER_MAX_LENGTH
     elif t == "group":
@@ -165,6 +178,7 @@ def validate_description(text: str, *, chat_type: ChatType = "user") -> str:
     :param text: biography (about) text
     :param chat_type: type of chat in which the text is located
     :return: Input text
+    :raises ValueError: if the specified chat type is invalid
     :raises ValidationError: if the passed text exceeds the maximum allowed
         length
     """
