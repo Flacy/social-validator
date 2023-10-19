@@ -116,9 +116,36 @@ INVALID_LAST_NAMES = ("A" * (LAST_NAME_MAX_LENGTH + 1),)
 VALID_FULL_NAMES = (
     # this may be a bit hard to read,
     # but here we just map each first_name to each last_name
-    (first_name, last_name)
-    for last_name in VALID_LAST_NAMES
-    for first_name in VALID_FIRST_NAMES
+    *(
+        (first_name, last_name)
+        for last_name in VALID_LAST_NAMES
+        for first_name in VALID_FIRST_NAMES
+    ),
+    # map valid first names to empty last name
+    *((first_name, "") for first_name in VALID_FIRST_NAMES),
+)
+
+INVALID_FULL_NAMES = (
+    # this may be even more difficult to read,
+    # but here we simply map the correct and incorrect first and last names
+    # in order to get a validation error in the final result
+    *(
+        (first_name, last_name)
+        for last_name in INVALID_LAST_NAMES
+        for first_name in VALID_FIRST_NAMES
+    ),
+    *(
+        (first_name, last_name)
+        for last_name in VALID_LAST_NAMES
+        for first_name in INVALID_FIRST_NAMES
+    ),
+    *(
+        (first_name, last_name)
+        for last_name in INVALID_LAST_NAMES
+        for first_name in INVALID_FIRST_NAMES
+    ),
+    # map invalid first names to empty last name
+    *((first_name, "") for first_name in INVALID_FIRST_NAMES),
 )
 
 VALID_MESSAGES = (

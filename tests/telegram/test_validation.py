@@ -63,6 +63,12 @@ def test_valid_full_name(first_name: str, last_name: str) -> None:
     assert_that(out_last_name).is_equal_to(last_name)
 
 
+@pytest.mark.parametrize('first_name, last_name', input.INVALID_FULL_NAMES)
+def test_invalid_full_name(first_name: str, last_name: str) -> None:
+    with pytest.raises(ValidationError):
+        telegram.validate_full_name(first_name=first_name, last_name=last_name)
+
+
 @pytest.mark.parametrize("text, include_media", input.VALID_MESSAGES)
 def test_valid_message(text: str, include_media: bool) -> None:
     v = telegram.validate_message(text, include_media=include_media)
