@@ -44,17 +44,19 @@ def _is_valid_name(s: str) -> bool:
     return s.isascii() and s.isalnum()
 
 
-def _is_valid_first_char(s: str) -> bool:
+def _is_valid_char_on_sides(s: str) -> bool:
     """
-    Checks the first character for the fact that it is not a digit or an
-    underscore.
+    Check of the correctness of the first and last characters.
+    The first and last character must not be an underscore.
+    The first character also can't be a digit.
     """
     if not s:
         # empty string
         return False
 
-    char = s[0]
-    return not char.isdigit() and char != "_"
+    first_char = s[0]
+    last_char = s[len(s) - 1]
+    return not first_char.isdigit() and first_char != "_" and last_char != "_"
 
 
 def _get_description_length_limit(t: ChatType) -> int:
@@ -77,7 +79,8 @@ def _get_description_length_limit(t: ChatType) -> int:
 
 def is_valid_id(_id: str) -> bool:
     return (
-        _is_valid_first_char(_id)
+        _is_valid_char_on_sides(_id)
+        and "__" not in _id
         and (ID_MIN_LENGTH <= len(_id) <= ID_MAX_LENGTH)
         and _is_valid_name(_id)
     )
@@ -128,8 +131,8 @@ def validate_id(_id: str) -> str:
     (available by ``t.me/%id%``).
 
     Only ID characters are allowed: A-Za-z, 0-9 and underscores.
-    ID only start with a letter and must contain from 5 to 32
-    characters.
+    ID only start with a letter, must not contain double underscores, and must
+    contain from 5 to 32 characters.
 
     :param _id: User, channel or bot identifier
     :return: Input value, converted to lower-case
