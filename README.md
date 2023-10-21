@@ -1,5 +1,10 @@
 # Social validator
 
+![CI](https://github.com/flacy/social-validator/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/Flacy/social-validator/graph/badge.svg?token=IX9AMG6L9F)](https://codecov.io/gh/Flacy/social-validator)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/social-validator)
+![License](https://img.shields.io/github/license/flacy/social-validator)
+
 ### ❓ What's this
 This is a library for validating data from social networks and messengers,
 such as identifiers, usernames, etc.
