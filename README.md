@@ -30,16 +30,17 @@ The interface for validating the values of **each service** looks like this:
 ```python
 from social_validator import telegram
 
-# Functions starting with "is" are used
-# only to check and get boolean value.
+# Functions starting with "is" are used only to check and get boolean value.
 telegram.is_valid_id("test_user_id")  # True
 
 # Functions starting with "validate" are used for full-fledged validation, they
-# format and raise social_validator.exceptions.ValidationError if validation failed.
+# format and raise social_validator.exceptions.ValidationError if validation
+# failed.
 telegram.validate_id("test_user_ID")  # "test_user_id"
 
 # Note: Each validation function is based on check functions, which means that
-# for each validation there is an analog that only returns boolean value, but not vice versa.
+# for each validation there is an analog that only returns boolean value,
+# but not vice versa.
 telegram.validate_command("cmd") and telegram.is_valid_command("cmd")
 ```
 Documentation for each method is available via docstrings.
