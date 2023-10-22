@@ -6,6 +6,9 @@ from social_validator.exceptions import ValidationError
 from tests.telegram import input
 
 
+# *** Validation functions ***
+
+
 @pytest.mark.parametrize("_id", input.VALID_IDS)
 def test_valid_id(_id: str) -> None:
     v = telegram.validate_id(_id)
@@ -42,6 +45,12 @@ def test_invalid_description(text: str, chat_type: telegram.ChatType) -> None:
         telegram.validate_description(text, chat_type=chat_type)
 
 
+@pytest.mark.parametrize("text, chat_type", input.INVALID_DESCRIPTIONS_CHAT_TYPES)
+def test_invalid_chat_type(text: str, chat_type: str) -> None:
+    with pytest.raises(ValueError):
+        telegram.validate_description(text, chat_type=chat_type)  # type: ignore
+
+
 @pytest.mark.parametrize("name", input.VALID_CHAT_NAMES)
 def test_valid_chat_name(name: str) -> None:
     v = telegram.validate_chat_name(name)
@@ -63,7 +72,7 @@ def test_valid_full_name(first_name: str, last_name: str) -> None:
     assert_that(out_last_name).is_equal_to(last_name)
 
 
-@pytest.mark.parametrize('first_name, last_name', input.INVALID_FULL_NAMES)
+@pytest.mark.parametrize("first_name, last_name", input.INVALID_FULL_NAMES)
 def test_invalid_full_name(first_name: str, last_name: str) -> None:
     with pytest.raises(ValidationError):
         telegram.validate_full_name(first_name=first_name, last_name=last_name)
@@ -91,3 +100,16 @@ def test_valid_command(cmd: str) -> None:
 def test_invalid_command(cmd: str) -> None:
     with pytest.raises(ValidationError):
         telegram.validate_command(cmd)
+
+
+# *** Check functions ***
+
+
+@pytest.mark.parametrize("first_name, last_name", input.VALID_FULL_NAMES)
+def test_is_valid_full_name(first_name: str, last_name: str) -> None:
+    assert_that(telegram.is_valid_full_name(first_name, last_name)).is_true()
+
+
+@pytest.mark.parametrize("first_name, last_name", input.INVALID_FULL_NAMES)
+def test_is_invalid_full_name(first_name: str, last_name: str) -> None:
+    assert_that(telegram.is_valid_full_name(first_name, last_name)).is_false()

@@ -25,6 +25,7 @@ VALID_IDS = (
 )
 
 INVALID_IDS = (
+    "",
     "A" * (ID_MIN_LENGTH - 1),
     "A" * (ID_MAX_LENGTH + 1),
     "123456",
@@ -81,6 +82,11 @@ INVALID_DESCRIPTIONS = (
     ("A" * (DESCRIPTION_GROUP_MAX_LENGTH + 1), "group"),
     ("A" * (DESCRIPTION_CHANNEL_MAX_LENGTH + 1), "channel"),
     ("A" * (DESCRIPTION_BOT_MAX_LENGTH + 1), "bot"),
+)
+
+INVALID_DESCRIPTIONS_CHAT_TYPES = (
+    ("test", ""),
+    ("test", "unexpected"),
 )
 
 VALID_CHAT_NAMES = (
