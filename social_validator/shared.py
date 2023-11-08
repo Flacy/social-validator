@@ -1,4 +1,4 @@
-def is_valid_name(s: str) -> bool:
+def is_valid_id(s: str) -> bool:
     """
     Checks the string for matching the pattern: A-Za-z, 0-9, _
     """
