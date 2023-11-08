@@ -11,12 +11,11 @@ This is a library for validating data from social networks and messengers,
 such as identifiers, usernames, etc.
 
 ### ⚡ Motivation
-The motivation for creating this library was derived from the fact that there
-is no single database to determine the restrictions of each service.
-Accordingly, in order to validate the data correctly, you need to deep down
-into the documentation, but sometimes even these data are not specified in it,
-and you need to test the validation manually. This library is designed to
-solve this problem. *Unfortunately, only for python ;(*
+The motivation behind creating this library stemmed from the lack of a
+centralized database containing restrictions for each service.
+Often, validating data correctly requires thoroughly analyzing documentation
+or manually testing validation.
+This library aims to solve this problem but is currently available only for Python.
 
 ### 💽 Installation
 You can use [pip](https://github.com/pypa/pip) or
@@ -30,17 +29,16 @@ The interface for validating the values of **each service** looks like this:
 ```python
 from social_validator import telegram
 
-# Functions starting with "is" are used only to check and get boolean value.
+# Functions starting with "is" are used for boolean value checking.
 telegram.is_valid_id("test_user_id")  # True
 
-# Functions starting with "validate" are used for full-fledged validation, they
-# format and raise social_validator.exceptions.ValidationError if validation
-# failed.
+# Functions starting with "validate" perform full-fledged validation,
+# formatting and raising "social_validator.exceptions.ValidationError" if the
+# validation fails.
 telegram.validate_id("test_user_ID")  # "test_user_id"
 
-# Note: Each validation function is based on check functions, which means that
-# for each validation there is an analog that only returns boolean value,
-# but not vice versa.
+# Note: Each validation function is based on a corresponding boolean check
+# function, but not vice versa.
 telegram.validate_command("cmd") and telegram.is_valid_command("cmd")
 ```
 Documentation for each method is available via docstrings.
@@ -51,5 +49,6 @@ The project is under development and is moving to a stable version.
 To track the status, you can [follow the link](https://github.com/users/Flacy/projects/1).
 
 ### 🛠️ Contributing
-If you want to help with development, or want to see some feature, or fix a
-bug, please open issue with the appropriate label first.
+If you want to contribute to development, request a feature, or report a bug,
+please open an [issue](https://github.com/Flacy/social-validator/issues)
+with the appropriate label.
