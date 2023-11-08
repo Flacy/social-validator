@@ -1,6 +1,7 @@
 from typing import Literal, Tuple
 
 from social_validator.exceptions import ValidationError
+from social_validator.shared import is_valid_name
 
 # Restrictions for user, channel and bot identifiers
 ID_MIN_LENGTH = 5
@@ -35,23 +36,13 @@ COMMAND_DESCRIPTION_MAX_LENGTH = 256
 ChatType = Literal["user", "group", "channel", "bot"]
 
 
-def _is_valid_name(s: str) -> bool:
-    """
-    Checks the string for matching the pattern: A-Za-z, 0-9, _
-    """
-    # use a small hack to avoid performing additional checks
-    s = s.replace("_", "A")
-    return s.isascii() and s.isalnum()
-
-
 def _is_valid_char_on_sides(s: str) -> bool:
     """
     Check of the correctness of the first and last characters.
     The first and last character must not be an underscore.
     The first character also can't be a digit.
     """
-    if not s:
-        # empty string
+    if not s:  # empty string
         return False
 
     first_char = s[0]
@@ -82,7 +73,7 @@ def is_valid_id(_id: str) -> bool:
         _is_valid_char_on_sides(_id)
         and "__" not in _id
         and (ID_MIN_LENGTH <= len(_id) <= ID_MAX_LENGTH)
-        and _is_valid_name(_id)
+        and is_valid_name(_id)
     )
 
 
@@ -120,7 +111,7 @@ def is_valid_message(text: str, *, include_media: bool = False) -> bool:
 
 def is_valid_command(cmd: str) -> bool:
     return (COMMAND_MIN_LENGTH <= len(cmd) <= COMMAND_MAX_LENGTH) and (
-        _is_valid_name(cmd)
+        is_valid_name(cmd)
     )
 
 
