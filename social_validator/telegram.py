@@ -1,7 +1,7 @@
 from typing import Literal, Tuple
 
+from social_validator import shared
 from social_validator.exceptions import ValidationError
-from social_validator.shared import is_valid_id
 
 # Restrictions for user, channel and bot identifiers
 ID_MIN_LENGTH = 5
@@ -70,10 +70,10 @@ def _get_description_length_limit(t: ChatType) -> int:
 
 def is_valid_id(_id: str) -> bool:
     return (
-            _is_valid_char_on_sides(_id)
-            and "__" not in _id
-            and (ID_MIN_LENGTH <= len(_id) <= ID_MAX_LENGTH)
-            and is_valid_id(_id)
+        _is_valid_char_on_sides(_id)
+        and "__" not in _id
+        and (ID_MIN_LENGTH <= len(_id) <= ID_MAX_LENGTH)
+        and shared.is_valid_id(_id)
     )
 
 
@@ -111,7 +111,7 @@ def is_valid_message(text: str, *, include_media: bool = False) -> bool:
 
 def is_valid_command(cmd: str) -> bool:
     return (COMMAND_MIN_LENGTH <= len(cmd) <= COMMAND_MAX_LENGTH) and (
-        is_valid_id(cmd)
+        shared.is_valid_id(cmd)
     )
 
 
