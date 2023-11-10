@@ -5,6 +5,49 @@ from social_validator.exceptions import ValidationError
 USERNAME_MIN_LENGTH = 4
 USERNAME_MAX_LENGTH = 25
 
+RESERVED_USERNAMES = {
+    "about",
+    "bits",
+    "blog",
+    "broadcast",
+    "chat",
+    "clips",
+    "directory",
+    "downloads",
+    "events",
+    "following",
+    "game",
+    "giftcard",
+    "help",
+    "host",
+    "jobs",
+    "legal",
+    "live",
+    "login",
+    "moderator",
+    "music",
+    "partner",
+    "point",
+    "prime",
+    "privacy",
+    "raid",
+    "redeem",
+    "search",
+    "security",
+    "settings",
+    "signup",
+    "store",
+    "stream",
+    "subscriptions",
+    "support",
+    "team",
+    "twitch",
+    "twitchcon",
+    "turbo",
+    "user",
+    "videos",
+}
+
 # Restrictions for messages
 MESSAGE_MIN_LENGTH = 1
 MESSAGE_MAX_LENGTH = 500
@@ -12,7 +55,8 @@ MESSAGE_MAX_LENGTH = 500
 
 def is_valid_username(username: str) -> bool:
     """
-    Checks if a given username is valid based on certain criteria described in
+    Checks the given username for character correctness.
+    More detailed validation criteria are described in
     :py:func:`validate_username`.
 
     :return: ``True``, if all the conditions are met, otherwise ``False``.
@@ -25,9 +69,21 @@ def is_valid_username(username: str) -> bool:
     )
 
 
+def is_reserved_username(username: str) -> bool:
+    """
+    Checks whether the username is reserved.
+    The complete list of reserved words can be viewed in the
+    :py:const:`RESERVED_USERNAMES`
+
+    :return: ``True``, if username is reserved, otherwise ``False``.
+    """
+    return username in RESERVED_USERNAMES
+
+
 def is_valid_message(text: str) -> bool:
     """
-    Checks if a given text is valid based on certain criteria described in
+    Checks the given text for character correctness.
+    More detailed validation criteria are described in
     :py:func:`validate_message`.
 
     :return: ``True``, if all the conditions are met, otherwise ``False``
@@ -43,6 +99,9 @@ def validate_username(username: str) -> str:
     - The username must not start with an underscore.
     - The username must not consist entirely of digits.
     - The username must consist of: A-Za-z, 0-9 and underscores.
+    - The username must not be a reserved word.
+
+    All reserved words are listed in :py:const:`RESERVED_USERNAMES`
 
     :param username: User text ID
     :return: Input username
@@ -52,6 +111,12 @@ def validate_username(username: str) -> str:
         raise ValidationError(
             "Username must be 4 to 25 characters long, exclude the underscore as the first "
             "character, and can only consist of: A-Za-z, 0-9 and underscores",
+            input_value=username,
+        )
+
+    if is_reserved_username(username):
+        raise ValidationError(
+            "Username must not be a reserved word",
             input_value=username,
         )
 
