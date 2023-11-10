@@ -111,10 +111,10 @@ def validate_username(username: str) -> str:
     """
     Validates a username based on the following criteria:
 
-    - The length of the username must be 4 to 25 characters long.
-    - The username must not start with an underscore.
-    - The username must not consist entirely of digits.
-    - The username must consist of: A-Za-z, 0-9 and underscores.
+    - The length of the username must be 4 to 25 characters long;
+    - The username must not start with an underscore;
+    - The username must not consist entirely of digits;
+    - The username must consist of: A-Za-z, 0-9 and underscores;
     - The username must not be a reserved word.
 
     All reserved words are listed in :py:const:`RESERVED_USERNAMES`
@@ -163,7 +163,7 @@ def validate_message(text: str) -> str:
     """
     Validates a text based on the following criteria:
 
-    - The text must be between 1 and 500 characters, inclusive.
+    - The text must be between 1 and 500 characters, inclusive;
     - The text must not contain any escaped characters.
 
     :param text: Message text
