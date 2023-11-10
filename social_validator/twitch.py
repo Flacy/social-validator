@@ -50,6 +50,9 @@ RESERVED_USERNAMES = frozenset(
     }
 )
 
+# Restrictions for description (about) field
+DESCRIPTION_MAX_LENGTH = 300
+
 # Restrictions for messages
 MESSAGE_MIN_LENGTH = 1
 MESSAGE_MAX_LENGTH = 500
@@ -80,6 +83,17 @@ def is_reserved_username(username: str) -> bool:
     :return: ``True``, if username is reserved, otherwise ``False``.
     """
     return username in RESERVED_USERNAMES
+
+
+def is_valid_description(text: str) -> bool:
+    """
+    Checks the given text for character correctness.
+    More detailed validation criteria are described in
+    :py:func:`validate_description`.
+
+    :return: ``True``, if all the conditions are met, otherwise ``False``.
+    """
+    return len(text) <= DESCRIPTION_MAX_LENGTH and text.isprintable()
 
 
 def is_valid_message(text: str) -> bool:
@@ -123,6 +137,26 @@ def validate_username(username: str) -> str:
         )
 
     return username
+
+
+def validate_description(text: str) -> str:
+    """
+    Validates a text based on the following criteria:
+
+    - The text must not exceed 300 characters;
+    - The text must not contain any escaped characters.
+
+    :param text: Description text
+    :return: Input text
+    :raise ValidationError: if the text does not meet the criteria
+    """
+    if not is_valid_description(text):
+        raise ValidationError(
+            "Description must not exceed 300 characters and must not contain escaped characters",
+            input_value=text,
+        )
+
+    return text
 
 
 def validate_message(text: str) -> str:
