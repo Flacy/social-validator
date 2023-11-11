@@ -5,7 +5,6 @@ from social_validator import telegram
 from social_validator.exceptions import ValidationError
 from tests.telegram import input
 
-
 # *** Validation functions ***
 
 

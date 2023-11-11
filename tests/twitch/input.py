@@ -1,10 +1,10 @@
 from social_validator.twitch import (
-    USERNAME_MIN_LENGTH,
-    USERNAME_MAX_LENGTH,
     DESCRIPTION_MAX_LENGTH,
     MESSAGE_MAX_LENGTH,
+    USERNAME_MAX_LENGTH,
+    USERNAME_MIN_LENGTH,
 )
-from tests.shared.input import RANDOM_UNICODE_STRING, ESCAPED_STRING
+from tests.shared.input import ESCAPED_STRING, RANDOM_UNICODE_STRING
 
 VALID_USERNAMES = {
     "a" * USERNAME_MIN_LENGTH,
