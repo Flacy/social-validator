@@ -12,8 +12,7 @@ from social_validator.telegram import (
     MEDIA_MESSAGE_MAX_LENGTH,
     MESSAGE_MAX_LENGTH,
 )
-
-RANDOM_UNICODE_STRING = "➷⡞⍄⪮ⴱ⧕⭀₃⵽▊⯛⪔⸠Ⱀ❠∭⯲⮈ⅈ⭐ℭ⥙⑼"
+from tests.shared.input import RANDOM_UNICODE_STRING
 
 VALID_IDS = (
     "A" * ID_MAX_LENGTH,
