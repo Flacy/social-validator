@@ -1,3 +1,4 @@
+from social_validator import telegram
 from social_validator.telegram import (
     CHAT_NAME_MAX_LENGTH,
     COMMAND_MAX_LENGTH,
@@ -204,3 +205,9 @@ INVALID_COMMANDS = (
     RANDOM_UNICODE_STRING,
     ESCAPED_STRING,
 )
+
+# combine a lower and upper case
+RESERVED_IDS = list(telegram.RESERVED_IDS) + [w.upper() for w in telegram.RESERVED_IDS]
+RESERVED_START_IDS = list(telegram.RESERVED_START_IDS) + [
+    w.upper() for w in telegram.RESERVED_START_IDS
+]

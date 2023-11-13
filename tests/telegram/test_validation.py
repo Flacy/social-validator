@@ -32,7 +32,7 @@ def test_invalid_bot_id(_id: str) -> None:
         telegram.validate_bot_id(_id)
 
 
-@pytest.mark.parametrize("_id", telegram.RESERVED_IDS)
+@pytest.mark.parametrize("_id", input.RESERVED_IDS)
 def test_reserved_id(_id: str) -> None:
     with pytest.raises(ValidationError):
         telegram.validate_id(_id)
@@ -41,7 +41,7 @@ def test_reserved_id(_id: str) -> None:
         telegram.validate_bot_id(_id)
 
 
-@pytest.mark.parametrize("_id", telegram.RESERVED_START_IDS)
+@pytest.mark.parametrize("_id", input.RESERVED_START_IDS)
 def test_reserved_start_id(_id: str) -> None:
     with pytest.raises(ValidationError):
         telegram.validate_id(_id)
