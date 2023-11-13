@@ -82,7 +82,7 @@ def is_reserved_username(username: str) -> bool:
 
     :return: ``True``, if username is reserved, otherwise ``False``.
     """
-    return username in RESERVED_USERNAMES
+    return username.lower() in RESERVED_USERNAMES
 
 
 def is_valid_description(text: str) -> bool:
@@ -144,7 +144,7 @@ def validate_description(text: str) -> str:
     Validates a text based on the following criteria:
 
     - The text must not exceed 300 characters;
-    - The text must not contain any escaped characters.
+    - The text must not be escaped.
 
     :param text: Description text
     :return: Input text
@@ -152,7 +152,7 @@ def validate_description(text: str) -> str:
     """
     if not is_valid_description(text):
         raise ValidationError(
-            "Description must not exceed 300 characters and must not contain escaped characters",
+            "Description must not exceed 300 characters and must not be escaped",
             input_value=text,
         )
 
@@ -164,7 +164,7 @@ def validate_message(text: str) -> str:
     Validates a text based on the following criteria:
 
     - The text must be between 1 and 500 characters, inclusive;
-    - The text must not contain any escaped characters.
+    - The text must not be escaped.
 
     :param text: Message text
     :return: Input text
@@ -173,7 +173,7 @@ def validate_message(text: str) -> str:
     if not is_valid_message(text):
         raise ValidationError(
             "Message must contain between 1 and 500 characters, inclusive, "
-            "and must not have any escaped characters",
+            "and must not be escaped",
             input_value=text,
         )
 
