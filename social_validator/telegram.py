@@ -7,6 +7,49 @@ from social_validator.exceptions import ValidationError
 ID_MIN_LENGTH = 5
 ID_MAX_LENGTH = 32
 
+RESERVED_IDS = frozenset(
+    [
+        "anonymous",
+        "awesome",
+        "brilliant",
+        "career",
+        "community",
+        "contact",
+        "download",
+        "events",
+        "feedback",
+        "helper",
+        "media",
+        "might",
+        "moderator",
+        "notifications",
+        "official",
+        "partners",
+        "press",
+        "private",
+        "public",
+        "report",
+        "share",
+        "start",
+        "staff",
+        "terms",
+        "update",
+        "updates",
+        "video",
+        "warning",
+        "watch",
+    ]
+)
+# Reserved words, from which an identifier can't begin
+RESERVED_START_IDS = frozenset(
+    [
+        "admin",
+        "support",
+        "telegram",
+        "settings",
+    ]
+)
+
 # Restrictions for description (about) field
 DESCRIPTION_USER_MAX_LENGTH = 70
 DESCRIPTION_GROUP_MAX_LENGTH = 255
@@ -77,6 +120,36 @@ def is_valid_id(_id: str) -> bool:
     )
 
 
+def is_reserved_id(_id: str) -> bool:
+    """
+    Checks whether the ID is reserved.
+    Case-insensitive.
+
+    Refer to the :py:const:`RESERVED_IDS` for the complete list of words.
+
+    :return: ``True`` if **ID** is reserved, ``False`` otherwise
+    """
+    return _id.lower() in RESERVED_IDS
+
+
+def is_reserved_start_id(_id: str) -> bool:
+    """
+    Checks if the initial characters of the ID are a reserved word.
+    Case-insensitive.
+
+    Refer to the :py:const:`RESERVED_START_IDS` for the complete list of words.
+
+    :return: ``True`` if **ID** starts with a reserved word, ``False`` otherwise
+    """
+    _id = _id.lower()
+
+    for word in RESERVED_START_IDS:
+        if _id.startswith(word):
+            return True
+
+    return False
+
+
 def is_bot_id(_id: str) -> bool:
     return _id.endswith("bot")
 
@@ -128,17 +201,28 @@ def validate_id(_id: str) -> str:
     (available by ``t.me/%id%``).
 
     Only ID characters are allowed: A-Za-z, 0-9 and underscores.
-    ID only start with a letter, must not contain double underscores, and must
-    contain from 5 to 32 characters.
+    ID only start with a letter, not contain double underscores, have a length
+    of 5 to 32 characters, and must not start with or be one of the reserved words.
 
     :param _id: User, channel or bot identifier
     :return: Input value, converted to lower-case
-    :raises ValidationError: if the passed value contains non-ascii characters,
-        spaces or other special chars not provided by Telegram
+    :raises ValidationError: if the above conditions are not met
     """
     if not is_valid_id(_id):
         raise ValidationError(
             "ID must be length from 5 to 32 chars, starts with a letter and consists of: A-Za-z, 0-9 and underscores",
+            input_value=_id,
+        )
+
+    if is_reserved_id(_id):
+        raise ValidationError(
+            "ID must not be a reserved word",
+            input_value=_id,
+        )
+
+    if is_reserved_start_id(_id):
+        raise ValidationError(
+            "ID must not start with a reserved word",
             input_value=_id,
         )
 
@@ -152,9 +236,8 @@ def validate_bot_id(_id: str) -> str:
 
     :param _id: Bot identifier
     :return: Input value, converted to lower-case
-    :raises ValidationError: if the passed value does not have a ``bot`` suffix,
-        contains non-ascii characters, spaces or other special chars not
-        provided by Telegram
+    :raises ValidationError: if the passed ID does not have a ``bot`` suffix
+        or ID validation was fails
     """
     _id = validate_id(_id)
 
