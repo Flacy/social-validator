@@ -12,7 +12,7 @@ from social_validator.telegram import (
     MEDIA_MESSAGE_MAX_LENGTH,
     MESSAGE_MAX_LENGTH,
 )
-from tests.shared.input import RANDOM_UNICODE_STRING
+from tests.shared.input import ESCAPED_STRING, RANDOM_UNICODE_STRING
 
 VALID_IDS = (
     "A" * ID_MAX_LENGTH,
@@ -36,6 +36,7 @@ INVALID_IDS = (
     "1_test",
     "тест_ид",
     RANDOM_UNICODE_STRING,
+    ESCAPED_STRING,
 )
 
 VALID_BOT_IDS = (
@@ -57,8 +58,9 @@ INVALID_BOT_IDS = (
     "t______bot",
     "1_testbot",
     "тестовый_идbot",
-    f"{RANDOM_UNICODE_STRING}bot",
     "correct_name_without_suffix",
+    f"{RANDOM_UNICODE_STRING}bot",
+    ESCAPED_STRING,
 )
 
 VALID_DESCRIPTIONS = (
@@ -81,6 +83,10 @@ INVALID_DESCRIPTIONS = (
     ("A" * (DESCRIPTION_GROUP_MAX_LENGTH + 1), "group"),
     ("A" * (DESCRIPTION_CHANNEL_MAX_LENGTH + 1), "channel"),
     ("A" * (DESCRIPTION_BOT_MAX_LENGTH + 1), "bot"),
+    (ESCAPED_STRING, "user"),
+    (ESCAPED_STRING, "group"),
+    (ESCAPED_STRING, "channel"),
+    (ESCAPED_STRING, "bot"),
 )
 
 INVALID_DESCRIPTIONS_CHAT_TYPES = (
@@ -97,6 +103,7 @@ VALID_CHAT_NAMES = (
 INVALID_CHAT_NAMES = (
     "",
     "A" * (CHAT_NAME_MAX_LENGTH + 1),
+    ESCAPED_STRING,
 )
 
 VALID_FIRST_NAMES = (
@@ -108,6 +115,7 @@ VALID_FIRST_NAMES = (
 INVALID_FIRST_NAMES = (
     "",
     "A" * (FIRST_NAME_MAX_LENGTH + 1),
+    ESCAPED_STRING,
 )
 
 VALID_LAST_NAMES = (
@@ -116,7 +124,7 @@ VALID_LAST_NAMES = (
     RANDOM_UNICODE_STRING,
 )
 
-INVALID_LAST_NAMES = ("A" * (LAST_NAME_MAX_LENGTH + 1),)
+INVALID_LAST_NAMES = ("A" * (LAST_NAME_MAX_LENGTH + 1), ESCAPED_STRING)
 
 VALID_FULL_NAMES = (
     # this may be a bit hard to read,
@@ -133,7 +141,7 @@ VALID_FULL_NAMES = (
 INVALID_FULL_NAMES = (
     # this may be even more difficult to read,
     # but here we simply map the correct and incorrect first and last names
-    # in order to get a validation error in the final result
+    # to get a validation error in the final result
     *(
         (first_name, last_name)
         for last_name in INVALID_LAST_NAMES
@@ -169,6 +177,8 @@ INVALID_MESSAGES = (
     ("A" * (MESSAGE_MAX_LENGTH + 1), False),
     ("", True),
     ("A" * (MEDIA_MESSAGE_MAX_LENGTH + 1), True),
+    (ESCAPED_STRING, True),
+    (ESCAPED_STRING, False),
 )
 
 VALID_COMMANDS = (
@@ -192,4 +202,5 @@ INVALID_COMMANDS = (
     "",
     "A" * (COMMAND_MAX_LENGTH + 1),
     RANDOM_UNICODE_STRING,
+    ESCAPED_STRING,
 )
