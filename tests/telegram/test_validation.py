@@ -32,6 +32,24 @@ def test_invalid_bot_id(_id: str) -> None:
         telegram.validate_bot_id(_id)
 
 
+@pytest.mark.parametrize("_id", input.RESERVED_IDS)
+def test_reserved_id(_id: str) -> None:
+    with pytest.raises(ValidationError):
+        telegram.validate_id(_id)
+
+    with pytest.raises(ValidationError):
+        telegram.validate_bot_id(_id)
+
+
+@pytest.mark.parametrize("_id", input.RESERVED_START_IDS)
+def test_reserved_start_id(_id: str) -> None:
+    with pytest.raises(ValidationError):
+        telegram.validate_id(_id)
+
+    with pytest.raises(ValidationError):
+        telegram.validate_bot_id(_id)
+
+
 @pytest.mark.parametrize("text, chat_type", input.VALID_DESCRIPTIONS)
 def test_valid_description(text: str, chat_type: telegram.ChatType) -> None:
     v = telegram.validate_description(text, chat_type=chat_type)
@@ -45,9 +63,9 @@ def test_invalid_description(text: str, chat_type: telegram.ChatType) -> None:
 
 
 @pytest.mark.parametrize("text, chat_type", input.INVALID_DESCRIPTIONS_CHAT_TYPES)
-def test_invalid_chat_type(text: str, chat_type: str) -> None:
+def test_invalid_chat_type(text: str, chat_type: telegram.ChatType) -> None:
     with pytest.raises(ValueError):
-        telegram.validate_description(text, chat_type=chat_type)  # type: ignore
+        telegram.validate_description(text, chat_type=chat_type)
 
 
 @pytest.mark.parametrize("name", input.VALID_CHAT_NAMES)
