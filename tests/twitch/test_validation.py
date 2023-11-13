@@ -17,7 +17,7 @@ def test_invalid_username(username: str) -> None:
         twitch.validate_username(username)
 
 
-@pytest.mark.parametrize("username", twitch.RESERVED_USERNAMES)
+@pytest.mark.parametrize("username", input.RESERVED_USERNAMES)
 def test_reserved_username(username: str) -> None:
     with pytest.raises(ValidationError):
         twitch.validate_username(username)

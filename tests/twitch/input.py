@@ -1,9 +1,4 @@
-from social_validator.twitch import (
-    DESCRIPTION_MAX_LENGTH,
-    MESSAGE_MAX_LENGTH,
-    USERNAME_MAX_LENGTH,
-    USERNAME_MIN_LENGTH,
-)
+from social_validator import twitch
 from tests.shared.input import ESCAPED_STRING, RANDOM_UNICODE_STRING
 
 VALID_USERNAMES = {
@@ -56,3 +51,8 @@ INVALID_MESSAGES = {
     "1" * (MESSAGE_MAX_LENGTH + 1),  # too long
     ESCAPED_STRING,  # escaped chars
 }
+
+# Combine lower and upper cases
+RESERVED_USERNAMES = list(twitch.RESERVED_USERNAMES) + [
+    word.upper() for word in twitch.RESERVED_USERNAMES
+]
