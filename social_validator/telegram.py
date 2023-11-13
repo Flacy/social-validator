@@ -82,19 +82,24 @@ def is_bot_id(_id: str) -> bool:
 
 
 def is_valid_description(text: str, *, chat_type: ChatType = "user") -> bool:
-    return len(text) <= _get_description_length_limit(chat_type)
+    return len(text) <= _get_description_length_limit(chat_type) and text.isprintable()
 
 
 def is_valid_chat_name(name: str) -> bool:
-    return CHAT_NAME_MIN_LENGTH <= len(name) <= CHAT_NAME_MAX_LENGTH
+    return (
+        CHAT_NAME_MIN_LENGTH <= len(name) <= CHAT_NAME_MAX_LENGTH and name.isprintable()
+    )
 
 
 def is_valid_first_name(name: str) -> bool:
-    return FIRST_NAME_MIN_LENGTH <= len(name) <= FIRST_NAME_MAX_LENGTH
+    return (
+        FIRST_NAME_MIN_LENGTH <= len(name) <= FIRST_NAME_MAX_LENGTH
+        and name.isprintable()
+    )
 
 
 def is_valid_last_name(name: str) -> bool:
-    return len(name) <= LAST_NAME_MAX_LENGTH
+    return len(name) <= LAST_NAME_MAX_LENGTH and name.isprintable()
 
 
 def is_valid_full_name(first_name: str, last_name: str = "") -> bool:
@@ -106,6 +111,7 @@ def is_valid_message(text: str, *, include_media: bool = False) -> bool:
         MESSAGE_MIN_LENGTH
         <= len(text)
         <= (MESSAGE_MAX_LENGTH if not include_media else MEDIA_MESSAGE_MAX_LENGTH)
+        and text.isprintable()
     )
 
 
@@ -174,12 +180,13 @@ def validate_description(text: str, *, chat_type: ChatType = "user") -> str:
     :return: Input text
     :raises ValueError: if the specified chat type is invalid
     :raises ValidationError: if the passed text exceeds the maximum allowed
-        length
+        length or if the text is escaped
     """
     if not is_valid_description(text, chat_type=chat_type):
         length_limit = _get_description_length_limit(chat_type)
         raise ValidationError(
-            f"Description text must contain no more than {length_limit} characters for '{chat_type}' chat type",
+            f"Description text must contain no more than {length_limit} characters"
+            f" for '{chat_type}' chat type and must not be escaped",
             input_value=text,
         )
 
@@ -193,12 +200,13 @@ def validate_chat_name(name: str) -> str:
 
     :param name: Channel or group name
     :return: Input name
-    :raises ValidationError: if there are not enough characters in passed name,
-        or their number exceeds the maximum allowed length
+    :raises ValidationError: if the name has insufficient characters,
+        exceeds the maximum allowed length, or if the name is escaped
     """
     if not is_valid_chat_name(name):
         raise ValidationError(
-            f"Chat name must contain from {CHAT_NAME_MIN_LENGTH} to {CHAT_NAME_MAX_LENGTH} characters",
+            f"Chat name must have a character limit of {CHAT_NAME_MIN_LENGTH} to "
+            f"{CHAT_NAME_MAX_LENGTH} and mustn't be escaped",
             input_value=name,
         )
 
@@ -208,23 +216,26 @@ def validate_chat_name(name: str) -> str:
 def validate_full_name(*, first_name: str, last_name: str = "") -> Tuple[str, str]:
     """
     Validates the first and last name separately for the length limit.
-    All characters are allowed. Passed names must not exceed 64 characters.
+    All characters are allowed.
+    Passed names must not exceed 64 characters.
     The first name can't be empty, the last name, on the contrary, can.
 
     :param first_name: User's first name
     :param last_name: User's last name
     :return: Tuple of input parameters (first_name, last_name)
-    :raises ValidationError: if there are not enough characters in passed name,
-        or their number exceeds the maximum allowed length
+    :raises ValidationError: if the passed name has insufficient characters,
+        exceeds the maximum allowed length, or the name is escaped
     """
     if not is_valid_first_name(first_name):
         raise ValidationError(
-            f"First name must contain from {FIRST_NAME_MIN_LENGTH} to {FIRST_NAME_MAX_LENGTH} characters",
+            f"First name must have a character limit of {FIRST_NAME_MIN_LENGTH} "
+            f"to {FIRST_NAME_MAX_LENGTH} and must not be escaped",
             input_value=first_name,
         )
     if not is_valid_last_name(last_name):
         raise ValidationError(
-            f"Last name must not exceed {LAST_NAME_MAX_LENGTH} characters",
+            f"Last name must not exceed {LAST_NAME_MAX_LENGTH} characters and"
+            f" must not be escaped",
             input_value=last_name,
         )
 
@@ -239,16 +250,16 @@ def validate_message(text: str, *, include_media: bool = False) -> str:
     the maximum length will be 1024, otherwise 4096.
 
     :param text: Message text
-    :param include_media: Does the message additionally include media files
+    :param include_media: Does the message additionally includes media files
     :return: Input text
     :raises ValidationError: if the text is empty or the length limit is
-        exceeded
+        exceeded, or if the text is escaped
     """
     if not is_valid_message(text, include_media=include_media):
         raise ValidationError(
             f"Message must contain from {MESSAGE_MIN_LENGTH} to "
             f"{MESSAGE_MAX_LENGTH if not include_media else MEDIA_MESSAGE_MAX_LENGTH} "
-            f"characters with include_media={include_media}",
+            f"characters with include_media={include_media} and must not be escaped",
             input_value=text,
         )
 
