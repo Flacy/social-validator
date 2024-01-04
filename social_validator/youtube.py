@@ -107,17 +107,17 @@ def is_reserved_username(username: str) -> bool:
     return username.lower() in RESERVED_USERNAMES
 
 
-def is_valid_video_url(url: str) -> bool:
+def is_valid_video_id(_id: str) -> bool:
     """
-    Checks the given url for length restrictions and character correctness.
+    Checks the given ID for length restrictions and character correctness.
     More detailed validation criteria are described in
-    :py:func:`validate_video_url`.
+    :py:func:`validate_video_id`.
 
     :return: ``True``, if all the conditions are met, otherwise ``False``.
     """
     return (
-        len(url) == VIDEO_ID_LENGTH
-        and shared.is_valid_id(url.replace('-', '_'))
+        len(_id) == VIDEO_ID_LENGTH
+        and shared.is_valid_id(_id.replace('-', '_'))
     )
 
 
@@ -199,11 +199,13 @@ def validate_username(username: str, *, strict: bool = True) -> str:
             "underscores and dots, can't consist entirely of numbers, and can't "
             "start with a dot",
             input_value=username,
+            strict=strict,
         )
     elif is_reserved_username(username):
         raise ValidationError(
             "Username must not be a reserved word",
             input_value=username,
+            strict=strict,
         )
 
     if not strict:
@@ -213,26 +215,26 @@ def validate_username(username: str, *, strict: bool = True) -> str:
     return username.lower()
 
 
-def validate_video_url(url: str) -> str:
+def validate_video_id(_id: str) -> str:
     """
     Validates a URL based on the following criteria:
 
     - It has a length of 11 characters;
     - It only contains the characters A-Za-z, 0-9, dashes, and underscores.
 
-    :param url: Value that stored in the argument "v" (/watch?v=)
+    :param _id: Value that stored in the argument "v" (/watch?v=)
     :return: Input value
     :raise ValidationError: If the URL doesn't meet the criteria
     """
-    if not is_valid_video_url(url):
+    if not is_valid_video_id(_id):
         raise ValidationError(
-            f'The url must be exactly {VIDEO_ID_LENGTH} characters long and '
+            f'The ID must be exactly {VIDEO_ID_LENGTH} characters long and '
             f'can only contain alphanumeric characters (A-Z, a-z, 0-9), '
             f'dashes, and underscores',
-            input_value=url,
+            input_value=_id,
         )
 
-    return url
+    return _id
 
 
 def validate_video_name(text: str) -> str:
