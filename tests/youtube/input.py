@@ -37,10 +37,14 @@ VALID_SOFT_USERNAMES = (
     ('-' * 100) + '2-._._-' + ('_' * 100),
 )
 INVALID_SOFT_USERNAMES = (
+    '',
+    '---___---',
+    '___---',
+    '--a',
     ('_' * 100) + ('a' * (youtube.USERNAME_MIN_LENGTH - 1)),
-    ('-' * 100) + ('a' * (youtube.USERNAME_MAX_LENGTH + 1)),
     ('_' * 100) + ('a' * (youtube.USERNAME_MAX_LENGTH + 1)),
     ('-' * 100) + ('a' * (youtube.USERNAME_MIN_LENGTH - 1)),
+    ('-' * 100) + ('a' * (youtube.USERNAME_MAX_LENGTH + 1)),
     ('_' * 100) + ('1' * (youtube.USERNAME_MIN_LENGTH - 1)),
     ('-' * 100) + ('1' * (youtube.USERNAME_MAX_LENGTH + 1)),
     RANDOM_UNICODE_STRING,
@@ -74,6 +78,7 @@ VALID_VIDEO_IDS = (
     '___--a-__a1',
 )
 INVALID_VIDEO_IDS = (
+    '',
     'a' * (youtube.VIDEO_ID_LENGTH - 1),
     'a' * (youtube.VIDEO_ID_LENGTH + 1),
     'a.12ijd2h3j',
@@ -98,6 +103,7 @@ VALID_VIDEO_NAMES = (
     RANDOM_UNICODE_STRING,
 )
 INVALID_VIDEO_NAMES = (
+    '',
     'a' * (youtube.VIDEO_NAME_MIN_LENGTH - 1),
     'a' * (youtube.VIDEO_NAME_MAX_LENGTH + 1),
     '<',
@@ -134,6 +140,7 @@ VALID_VIDEO_COMMENTS = (
     RANDOM_UNICODE_STRING,
 )
 INVALID_VIDEO_COMMENTS = (
+    '',
     'a' * (youtube.VIDEO_COMMENT_MIN_LENGTH - 1),
     'a' * (youtube.VIDEO_COMMENT_MAX_LENGTH + 1),
     ESCAPED_STRING,
