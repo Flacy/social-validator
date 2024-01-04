@@ -42,6 +42,15 @@ RESERVED_USERNAMES = frozenset(
     )
 )
 
+# Restriction for videos
+VIDEO_ID_LENGTH = 11
+VIDEO_NAME_MIN_LENGTH = 1
+VIDEO_NAME_MAX_LENGTH = 100
+VIDEO_DESCRIPTION_SHORT_MAX_LENGTH = 135
+VIDEO_DESCRIPTION_MAX_LENGTH = 5000
+VIDEO_COMMENT_MIN_LENGTH = 1
+VIDEO_COMMENT_MAX_LENGTH = 10000
+
 
 def _replace_ignored_chars(s: str, replace: str) -> str:
     """
@@ -54,9 +63,23 @@ def _replace_ignored_chars(s: str, replace: str) -> str:
     return s
 
 
+def _contains_angle_brackets(s: str) -> bool:
+    """
+    Checks for the presence of angle brackets within a string.
+    """
+    return '>' in s or '<' in s
+
+
+def _is_valid_text(text: str) -> bool:
+    """
+    Checks the text for compliance with YouTube restrictions.
+    """
+    return not _contains_angle_brackets(text) and text.isprintable()
+
+
 def is_valid_username(username: str, *, strct: bool = True) -> bool:
     """
-    Checks the given username for character correctness.
+    Checks the given username for length restrictions and character correctness.
     More detailed validation criteria are described in
     :py:func:`validate_username`.
 
@@ -84,11 +107,67 @@ def is_reserved_username(username: str) -> bool:
     return username.lower() in RESERVED_USERNAMES
 
 
+def is_valid_video_url(url: str) -> bool:
+    """
+    Checks the given url for length restrictions and character correctness.
+    More detailed validation criteria are described in
+    :py:func:`validate_video_url`.
+
+    :return: ``True``, if all the conditions are met, otherwise ``False``.
+    """
+    return (
+        len(url) == VIDEO_ID_LENGTH
+        and shared.is_valid_id(url.replace('-', '_'))
+    )
+
+
+def is_valid_video_name(text: str) -> bool:
+    """
+    Checks the given text for length restrictions and character correctness.
+    More detailed validation criteria are described in
+    :py:func:`validate_video_name`.
+
+    :return: ``True``, if all the conditions are met, otherwise ``False``.
+    """
+    return (
+        VIDEO_NAME_MIN_LENGTH <= len(text) <= VIDEO_NAME_MAX_LENGTH
+        and _is_valid_text(text)
+    )
+
+
+def is_valid_video_comment(text: str) -> bool:
+    """
+    Checks the given text for length restrictions and character correctness.
+    More detailed validation criteria are described in
+    :py:func:`validate_video_comment`.
+
+    :return: ``True``, if all the conditions are met, otherwise ``False``.
+    """
+    return (
+        VIDEO_COMMENT_MIN_LENGTH <= len(text) <= VIDEO_COMMENT_MAX_LENGTH
+        and text.isprintable()
+    )
+
+
+def is_valid_video_description(text: str, *, short: bool = False) -> bool:
+    """
+    Checks the given text for character correctness.
+    More detailed validation criteria are described in
+    :py:func:`validate_video_description`.
+
+    :return: ``True``, if all the conditions are met, otherwise ``False``.
+    """
+    return (
+        len(text) <= (VIDEO_DESCRIPTION_MAX_LENGTH if not short else VIDEO_DESCRIPTION_SHORT_MAX_LENGTH)
+        and _is_valid_text(text)
+    )
+
+
 def validate_username(username: str, *, strict: bool = True) -> str:
     """
     Validates a username based on the following criteria:
 
-    - The username contains between 3 and 30 characters, inclusively;
+    - It contains between 3 and 30 characters, inclusively;
     - It consist of A-Za-z, digits, hyphens, underscores, and dots;
     - It doesn't start with a dot;
     - It is not entirely composed of digits;
@@ -101,7 +180,7 @@ def validate_username(username: str, *, strict: bool = True) -> str:
     When it is enabled, the validation will be strict and all characters will
     be preserved.
     When it is disabled, a soft validation will be performed,
-    ignoring hyphens and underscores.
+    ignoring dashes and underscores.
 
     This is due to the specific algorithms used by YouTube. When following a
     link that includes the "@" symbol, a strict search will be conducted.
@@ -111,11 +190,12 @@ def validate_username(username: str, *, strict: bool = True) -> str:
     :param strict: Is the username includes "@" symbol
     :return: Input username, converted to lower-case. If the strict mode is
         disabled, all hyphens and underscores will be removed.
-    :raise ValidationError: If the username does not meet the criteria
+    :raise ValidationError: If the username doesn't meet the criteria
     """
     if not is_valid_username(username, strct=strict):
         raise ValidationError(
-            "Username must have between 3 and 20 characters, including hyphens, "
+            f"Username must have between {USERNAME_MIN_LENGTH} and "
+            f"{USERNAME_MAX_LENGTH} characters, including hyphens, "
             "underscores and dots, can't consist entirely of numbers, and can't "
             "start with a dot",
             input_value=username,
@@ -131,3 +211,96 @@ def validate_username(username: str, *, strict: bool = True) -> str:
         username = _replace_ignored_chars(username, "")
 
     return username.lower()
+
+
+def validate_video_url(url: str) -> str:
+    """
+    Validates a URL based on the following criteria:
+
+    - It has a length of 11 characters;
+    - It only contains the characters A-Za-z, 0-9, dashes, and underscores.
+
+    :param url: Value that stored in the argument "v" (/watch?v=)
+    :return: Input value
+    :raise ValidationError: If the URL doesn't meet the criteria
+    """
+    if not is_valid_video_url(url):
+        raise ValidationError(
+            f'The url must be exactly {VIDEO_ID_LENGTH} characters long and '
+            f'can only contain alphanumeric characters (A-Z, a-z, 0-9), '
+            f'dashes, and underscores',
+            input_value=url,
+        )
+
+    return url
+
+
+def validate_video_name(text: str) -> str:
+    """
+    Validates a text based on the following criteria:
+
+    - It has a length of 1 to 100 characters, inclusive;
+    - It consists of displayable characters;
+    - It not contains angle brackets (>, <) within it.
+
+    :param text: Video name
+    :return: Input value
+    :raise ValidationError: If the text doesn't meet the criteria
+    """
+    if not is_valid_video_name(text):
+        raise ValidationError(
+            f'The video name must have a length of {VIDEO_NAME_MIN_LENGTH} to '
+            f'{VIDEO_NAME_MAX_LENGTH} characters, consist of displayable '
+            f'characters and not have angle brackets within it',
+            input_value=text,
+        )
+
+    return text
+
+
+def validate_video_description(text: str, *, short: bool = False) -> str:
+    """
+    Validates a text based on the following criteria:
+
+    - It has a length up to 5000 (or 135 for short) characters long;
+    - it consists of displayable characters;
+    - It not contains angle brackets (>, <) within it.
+
+    :param text: Description text
+    :param short: Is it short version
+    :return: Input value
+    :raise ValidationError: If the text doesn't meet the criteria
+    """
+    if not is_valid_video_description(text, short=short):
+        raise ValidationError(
+            f'The video description must be up to '
+            f'{VIDEO_DESCRIPTION_MAX_LENGTH if not short else VIDEO_DESCRIPTION_SHORT_MAX_LENGTH} '
+            f'characters long, not contain angle brackets, '
+            f'and not have escaped characters or other special characters',
+            input_value=text,
+            short=short,
+        )
+
+    return text
+
+
+def validate_video_comment(text: str) -> str:
+    """
+    Validates a text based on the following criteria:
+
+    - It has a length of 1 to 10000 characters, inclusive;
+    - it consists of displayable characters;
+
+    :param text: Comment text
+    :return: Input value
+    :raise ValidationError: If the text doesn't meet the criteria
+    """
+    if not is_valid_video_comment(text):
+        raise ValidationError(
+            f'The video comment must have a length of '
+            f'{VIDEO_COMMENT_MIN_LENGTH} to {VIDEO_COMMENT_MAX_LENGTH} '
+            f'characters and consist of displayable characters',
+            input_value=text,
+        )
+
+    return text
